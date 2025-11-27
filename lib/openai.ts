@@ -1,11 +1,21 @@
 import OpenAI from "openai";
 
-// Initialize the OpenAI client with the API key
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization - only create client when needed
+let openaiClient: OpenAI | null = null;
 
-// Check if OpenAI API key is set
-if (!process.env.OPENAI_API_KEY) {
-  console.warn("Missing OPENAI_API_KEY environment variable");
+export function getOpenAI(): OpenAI | null {
+  if (!process.env.OPENAI_API_KEY) {
+    return null;
+  }
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openaiClient;
 }
+
+// For backwards compatibility
+export const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
