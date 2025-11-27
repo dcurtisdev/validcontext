@@ -180,12 +180,12 @@ export default function Home() {
                 <div className="absolute top-8 left-[calc(50%+48px)] hidden lg:block w-[calc(100%-96px)] h-px bg-gradient-to-r from-accent/50 to-transparent" />
                 <span className="text-xs font-semibold text-accent mb-2">STEP 2</span>
                 <h3 className="font-semibold text-lg text-foreground mb-3">
-                  Test With Your Validated Personas
+                  Optimize Every Stage of Buying
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  Paste your landing page URL. We simulate responses from personas
-                  built on your interview data. See what converts before spending
-                  a dollar on ads.
+                  Test your landing page, emails, and messaging against personas
+                  built from your interviews. See what moves them forward at each
+                  stage - and what&apos;s holding them back.
                 </p>
               </div>
             </div>
@@ -282,12 +282,12 @@ export default function Home() {
                 <TestTube2 className="w-6 h-6 text-accent" />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-3">
-                Landing Page Testing
+                Buying Journey Optimization
               </h3>
               <p className="text-muted-foreground text-sm">
-                Test your page with 100 users before launch. Get conversion
-                predictions, section-by-section feedback, specific
-                recommendations.
+                See how your page performs at each stage of the buying journey.
+                Identify what&apos;s pushing visitors forward and what&apos;s holding
+                them back - from first thought to decision.
               </p>
             </div>
 
