@@ -4,7 +4,6 @@ import { Instrument_Serif } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import Link from "next/link";
-import Script from "next/script";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -101,14 +100,12 @@ export default function RootLayout({
                   {/* Right side - CTA + Theme */}
                   <div className="flex items-center gap-4">
                     <ThemeSwitcher />
-                    <button
-                      data-tally-open={process.env.NEXT_PUBLIC_TALLY_FORM_ID}
-                      data-tally-width="400"
-                      data-tally-emoji-animation="none"
+                    <Link
+                      href="#waitlist"
                       className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors"
                     >
                       Join Waitlist
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -200,10 +197,6 @@ export default function RootLayout({
           </div>
           <Toaster />
         </ThemeProvider>
-        <Script
-          src="https://tally.so/widgets/embed.js"
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );

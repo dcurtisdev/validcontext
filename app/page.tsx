@@ -45,15 +45,13 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <button
-              data-tally-open={process.env.NEXT_PUBLIC_TALLY_FORM_ID}
-              data-tally-width="400"
-              data-tally-emoji-animation="none"
+            <a
+              href="#waitlist"
               className="inline-flex items-center gap-2 px-8 py-4 text-base font-medium rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-accent/25"
             >
               Join the Waitlist
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
             <a
               href="#how-it-works"
               className="inline-flex items-center gap-2 px-8 py-4 text-base font-medium rounded-xl border border-border hover:bg-muted/50 transition-colors"
@@ -426,19 +424,8 @@ export default function Home() {
             Free for first 100 users. No credit card required.
           </p>
 
-          {/* Waitlist CTA */}
-          <button
-            data-tally-open={process.env.NEXT_PUBLIC_TALLY_FORM_ID}
-            data-tally-width="400"
-            data-tally-emoji-animation="none"
-            className="inline-flex items-center gap-2 px-8 py-4 text-base font-medium rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-accent/25"
-          >
-            Join the Waitlist
-            <ArrowRight className="w-4 h-4" />
-          </button>
-          <p className="text-xs text-muted-foreground mt-4">
-            No spam. Unsubscribe anytime.
-          </p>
+          {/* Waitlist Form */}
+          <WaitlistForm />
         </div>
       </section>
     </div>
@@ -474,6 +461,104 @@ function FAQItem({
         </div>
       )}
     </div>
+  );
+}
+
+// Waitlist Form Component
+function WaitlistForm() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          setErrorMessage("You're already on the list!");
+          setStatus("success");
+          setEmail("");
+          return;
+        }
+        throw new Error(data.error || "Failed to join waitlist");
+      }
+
+      setStatus("success");
+      setEmail("");
+    } catch (error) {
+      console.error("Waitlist signup error:", error);
+      setErrorMessage(error instanceof Error ? error.message : "Something went wrong");
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div className="p-8 rounded-2xl border border-accent/20 bg-accent/5 max-w-md mx-auto">
+        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+          <span className="text-accent text-2xl">✓</span>
+        </div>
+        <h3 className="font-semibold text-lg text-foreground mb-2">
+          You&apos;re on the list!
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          We&apos;ll email you when we launch. Thanks for your interest!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          required
+          className="flex-1 px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+        />
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="px-6 py-3 rounded-xl bg-accent text-accent-foreground font-medium hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {status === "loading" ? (
+            <>
+              <span className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin" />
+              Joining...
+            </>
+          ) : (
+            <>
+              Join Waitlist
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
+        </button>
+      </div>
+      {status === "error" && errorMessage && (
+        <p className="text-sm text-destructive mt-3">{errorMessage}</p>
+      )}
+      <p className="text-xs text-muted-foreground mt-4">
+        No spam. Unsubscribe anytime.
+      </p>
+    </form>
   );
 }
 
