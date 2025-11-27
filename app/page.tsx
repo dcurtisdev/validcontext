@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import Script from "next/script";
 import {
   MessageSquare,
   BarChart3,
@@ -39,8 +40,8 @@ export default function Home() {
 
           {/* Subheadline */}
           <p className="animate-fade-in-up delay-200 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Validate ideas through customer interviews, then build with Claude
-            Code using those insights.
+            Validate ideas through customer interviews, then build with AI
+            coding tools using those insights.
           </p>
 
           {/* CTA Buttons */}
@@ -62,7 +63,7 @@ export default function Home() {
 
           {/* Social proof */}
           <p className="animate-fade-in-up delay-400 text-sm text-muted-foreground">
-            Free for first 100 users &bull; No credit card required
+            Be first to know when we launch
           </p>
         </div>
 
@@ -80,7 +81,7 @@ export default function Home() {
               The Problem You Know Too Well
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              You can build an MVP in a weekend with Claude Code or Cursor. But
+              You can build an MVP in a weekend with AI coding tools. But
               you spend months building the wrong thing.
             </p>
           </div>
@@ -179,11 +180,12 @@ export default function Home() {
                 <div className="absolute top-8 left-[calc(50%+48px)] hidden lg:block w-[calc(100%-96px)] h-px bg-gradient-to-r from-accent/50 to-transparent" />
                 <span className="text-xs font-semibold text-accent mb-2">STEP 2</span>
                 <h3 className="font-semibold text-lg text-foreground mb-3">
-                  Test Before You Launch
+                  Test With Your Validated Personas
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  Paste your landing page URL or HTML. Get 100 user responses in
-                  60 seconds. See what converts before spending a dollar on ads.
+                  Paste your landing page URL. We simulate responses from personas
+                  built on your interview data. See what converts before spending
+                  a dollar on ads.
                 </p>
               </div>
             </div>
@@ -199,8 +201,8 @@ export default function Home() {
                   Build With Context
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  Install our MCP server with one command. Now Claude Code reads
-                  your validated customer insights while you build. Every feature
+                  Connect to our MCP server with one command. Now your AI coding
+                  assistant reads your validated customer insights while you build. Every feature
                   matches real customer needs.
                 </p>
               </div>
@@ -216,15 +218,17 @@ export default function Home() {
               <span className="ml-2 text-xs">Terminal</span>
             </div>
             <code className="text-muted-foreground">
-              <span className="text-accent">$</span> npx validated-context init
+              <span className="text-accent">$</span> claude mcp add validcontext
+              <br />
+              <span className="text-muted-foreground">? Select transport type:</span> Streamable HTTP
+              <br />
+              <span className="text-muted-foreground">? Enter server URL:</span> https://validcontext.com/mcp
+              <br />
+              <span className="text-green-500">✓</span> Opened browser for authentication
               <br />
               <span className="text-green-500">✓</span> Connected to ValidContext
-              API
               <br />
-              <span className="text-green-500">✓</span> MCP server running
-              <br />
-              <span className="text-green-500">✓</span> Claude Code can now access
-              your validated insights
+              <span className="text-green-500">✓</span> Your AI assistant can now access your validated insights
             </code>
           </div>
         </div>
@@ -296,9 +300,9 @@ export default function Home() {
                 MCP Integration
               </h3>
               <p className="text-muted-foreground text-sm">
-                One command: <code className="px-1.5 py-0.5 rounded bg-muted text-xs">npx validated-context init</code>
+                One command: <code className="px-1.5 py-0.5 rounded bg-muted text-xs">claude mcp add validcontext</code>
                 <br />
-                Now Claude Code reads your customer data while you build.
+                Now your AI assistant reads your customer data while you build.
               </p>
             </div>
           </div>
@@ -391,8 +395,8 @@ export default function Home() {
               answer="70%+ correlation with real conversion rates in our validation study."
             />
             <FAQItem
-              question="Does this work with Cursor or just Claude Code?"
-              answer="Works with any MCP-compatible tool: Claude Code, Cursor, and more coming."
+              question="What AI coding tools does this work with?"
+              answer="Any tool that supports MCP (Model Context Protocol) - Claude Code, Cursor, Windsurf, and more."
             />
             <FAQItem
               question="What if I don't have customers to interview yet?"
@@ -421,7 +425,7 @@ export default function Home() {
           </h2>
 
           <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-            Free for first 100 users. No credit card required.
+            Be first to know when we launch.
           </p>
 
           {/* Waitlist Form */}
@@ -469,10 +473,41 @@ function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+
+  // Reset Turnstile widget
+  const resetTurnstile = () => {
+    if (typeof window !== "undefined" && (window as any).turnstile && turnstileRef.current) {
+      (window as any).turnstile.reset(turnstileRef.current);
+    }
+    setTurnstileToken(null);
+  };
+
+  // Set up Turnstile callback - just store the token
+  useEffect(() => {
+    (window as any).onTurnstileCallback = (token: string) => {
+      setTurnstileToken(token);
+    };
+    (window as any).onTurnstileError = () => {
+      setErrorMessage("Verification failed. Please refresh and try again.");
+      setStatus("error");
+    };
+    return () => {
+      delete (window as any).onTurnstileCallback;
+      delete (window as any).onTurnstileError;
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+
+    if (!turnstileToken) {
+      setErrorMessage("Please wait for verification to complete");
+      setStatus("error");
+      return;
+    }
 
     setStatus("loading");
     setErrorMessage("");
@@ -483,7 +518,7 @@ function WaitlistForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, turnstileToken }),
       });
 
       const data = await response.json();
@@ -504,6 +539,7 @@ function WaitlistForm() {
       console.error("Waitlist signup error:", error);
       setErrorMessage(error instanceof Error ? error.message : "Something went wrong");
       setStatus("error");
+      resetTurnstile();
     }
   };
 
@@ -524,41 +560,58 @@ function WaitlistForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-      <div className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          required
-          className="flex-1 px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+    <>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            required
+            className="flex-1 px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+          />
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="px-6 py-3 rounded-xl bg-accent text-accent-foreground font-medium hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {status === "loading" ? (
+              <>
+                <span className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin" />
+                Joining...
+              </>
+            ) : (
+              <>
+                Join Waitlist
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
+        {/* Cloudflare Turnstile - only shows if challenge needed */}
+        <div
+          ref={turnstileRef}
+          className="cf-turnstile mt-3 flex justify-center"
+          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          data-callback="onTurnstileCallback"
+          data-error-callback="onTurnstileError"
+          data-size="flexible"
+          data-appearance="interaction-only"
         />
-        <button
-          type="submit"
-          disabled={status === "loading"}
-          className="px-6 py-3 rounded-xl bg-accent text-accent-foreground font-medium hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {status === "loading" ? (
-            <>
-              <span className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin" />
-              Joining...
-            </>
-          ) : (
-            <>
-              Join Waitlist
-              <ArrowRight className="w-4 h-4" />
-            </>
-          )}
-        </button>
-      </div>
-      {status === "error" && errorMessage && (
-        <p className="text-sm text-destructive mt-3">{errorMessage}</p>
-      )}
-      <p className="text-xs text-muted-foreground mt-4">
-        No spam. Unsubscribe anytime.
-      </p>
-    </form>
+        {status === "error" && errorMessage && (
+          <p className="text-sm text-destructive mt-3">{errorMessage}</p>
+        )}
+        <p className="text-xs text-muted-foreground mt-4">
+          No spam. Unsubscribe anytime.
+        </p>
+      </form>
+    </>
   );
 }
 

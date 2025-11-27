@@ -1,9 +1,41 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+async function verifyTurnstile(token: string): Promise<boolean> {
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        secret: process.env.TURNSTILE_SECRET_KEY!,
+        response: token,
+      }),
+    }
+  );
+  const data = await response.json();
+  return data.success === true;
+}
+
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
+    const { email, turnstileToken } = await request.json();
+
+    // Verify Turnstile token
+    if (!turnstileToken) {
+      return NextResponse.json(
+        { error: "Captcha verification required" },
+        { status: 400 }
+      );
+    }
+
+    const isValidCaptcha = await verifyTurnstile(turnstileToken);
+    if (!isValidCaptcha) {
+      return NextResponse.json(
+        { error: "Captcha verification failed" },
+        { status: 400 }
+      );
+    }
 
     // Validate email
     if (!email || typeof email !== "string") {
