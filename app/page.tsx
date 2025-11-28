@@ -6,12 +6,12 @@ export default function Home() {
       variant="a"
       headline={
         <>
-          Stop Building Products
+          You Can Build Anything.
           <br />
-          <span className="text-accent">Nobody Wants</span>
+          <span className="text-accent">Now Know What to Build.</span>
         </>
       }
-      subheadline="Validate ideas through customer interviews, then build with AI coding tools using those insights."
+      subheadline="Professional customer discovery, accessible to every builder. Context flows to your AI tools automatically."
     />
   );
 }
