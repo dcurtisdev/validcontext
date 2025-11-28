@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Script from "next/script";
-import Link from "next/link";
 import {
   MessageSquare,
   BarChart3,
@@ -21,35 +20,9 @@ export interface LandingPageProps {
   subheadline: string;
 }
 
-const variants = [
-  { id: "a", label: "A: Problem", path: "/" },
-  { id: "b", label: "B: Speed", path: "/b" },
-  { id: "c", label: "C: Integration", path: "/c" },
-  { id: "d", label: "D: Outcome", path: "/d" },
-  { id: "e", label: "E: Confidence", path: "/e" },
-  { id: "f", label: "F: Waste", path: "/f" },
-];
-
 export default function LandingPage({ variant, headline, subheadline }: LandingPageProps) {
   return (
     <div className="grain-overlay">
-      {/* Variant Switcher */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex gap-1 p-1 rounded-lg bg-background/80 backdrop-blur border border-border shadow-lg">
-        {variants.map((v) => (
-          <Link
-            key={v.id}
-            href={v.path}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-              variant === v.id
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-            }`}
-          >
-            {v.label}
-          </Link>
-        ))}
-      </div>
-
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Background decoration */}
