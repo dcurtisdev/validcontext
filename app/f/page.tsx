@@ -1,14 +1,15 @@
 import LandingPage from "@/components/LandingPage";
 
-export default function Home() {
+// Option F: Waste Prevention
+export default function VariantF() {
   return (
     <LandingPage
-      variant="a"
+      variant="f"
       headline={
         <>
-          Stop Building Products
+          Stop Wasting Months
           <br />
-          <span className="text-accent">Nobody Wants</span>
+          <span className="text-accent">Building the Wrong Thing</span>
         </>
       }
       subheadline="Validate ideas through customer interviews, then build with AI coding tools using those insights."
