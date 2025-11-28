@@ -12,20 +12,27 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "ValidContext - Stop Building Products Nobody Wants",
+  title: "ValidContext - You Can Build Anything. Now Know What to Build.",
   description:
-    "Validate ideas through customer interviews, then build with Claude Code using those insights. The AI PM Copilot for vibe coders.",
+    "Professional customer discovery, accessible to every builder. Validate ideas through structured interviews, then build with AI coding tools using those insights.",
+  keywords: ["customer discovery", "product validation", "jobs to be done", "JTBD", "customer interviews", "MCP", "AI coding", "vibe coding"],
+  authors: [{ name: "ValidContext" }],
+  creator: "ValidContext",
   openGraph: {
-    title: "ValidContext - Stop Building Products Nobody Wants",
+    title: "ValidContext - You Can Build Anything. Now Know What to Build.",
     description:
-      "Validate ideas through customer interviews, then build with Claude Code using those insights.",
+      "Professional customer discovery, accessible to every builder. Context flows to your AI tools automatically.",
     type: "website",
+    siteName: "ValidContext",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ValidContext - Stop Building Products Nobody Wants",
+    title: "ValidContext - You Can Build Anything. Now Know What to Build.",
     description:
-      "Validate ideas through customer interviews, then build with Claude Code using those insights.",
+      "Professional customer discovery, accessible to every builder. Context flows to your AI tools automatically.",
+  },
+  alternates: {
+    canonical: "https://validcontext.com",
   },
 };
 
@@ -53,6 +60,79 @@ export default function RootLayout({
       className={`${geistSans.variable} ${instrumentSerif.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": "https://validcontext.com/#organization",
+                  name: "ValidContext",
+                  url: "https://validcontext.com",
+                  logo: "https://validcontext.com/favicon.ico",
+                  description: "Professional customer discovery, accessible to every builder.",
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://validcontext.com/#website",
+                  url: "https://validcontext.com",
+                  name: "ValidContext",
+                  publisher: { "@id": "https://validcontext.com/#organization" },
+                },
+                {
+                  "@type": "FAQPage",
+                  "@id": "https://validcontext.com/#faq",
+                  mainEntity: [
+                    {
+                      "@type": "Question",
+                      name: "Do I need to know Jobs-to-be-Done methodology?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Nope. The platform teaches you while you work. You'll learn by doing.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "How accurate are the landing page tests?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "70%+ correlation with real conversion rates in our validation study.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What AI coding tools does this work with?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Any tool that supports MCP (Model Context Protocol) - Claude Code, Cursor, Windsurf, and more.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What if I don't have customers to interview yet?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Test with people who have your target problem. We show you how to find them.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "How is this different from UserTesting or Maze?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "We connect validation to building. UserTesting costs $26K/year and stops at insights. We take you from interview to launched product.",
+                      },
+                    },
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
+      </head>
       <body className={`${geistSans.className} bg-background text-foreground antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -188,6 +268,12 @@ export default function RootLayout({
                   <p className="text-xs text-muted-foreground">
                     &copy; {new Date().getFullYear()} ValidContext. All rights reserved.
                   </p>
+                  <a
+                    href="mailto:hello@fullstackproduct.build"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    hello@fullstackproduct.build
+                  </a>
                   <div className="flex items-center gap-4">
                     <ThemeSwitcher />
                   </div>
