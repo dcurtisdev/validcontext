@@ -170,6 +170,12 @@ export default function RootLayout({
                       Features
                     </Link>
                     <Link
+                      href="/blog"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Blog
+                    </Link>
+                    <Link
                       href="#faq"
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
@@ -250,9 +256,12 @@ export default function RootLayout({
                     <h4 className="text-sm font-semibold text-foreground mb-4">Resources</h4>
                     <ul className="space-y-3">
                       <li>
-                        <span className="text-sm text-muted-foreground/60">
-                          Blog (Coming Soon)
-                        </span>
+                        <Link
+                          href="/blog"
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          Blog
+                        </Link>
                       </li>
                       <li>
                         <span className="text-sm text-muted-foreground/60">
